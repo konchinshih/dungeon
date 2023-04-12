@@ -11,17 +11,18 @@ namespace dungeon {
 
 struct TradingItem {
 	std::unique_ptr<Item> item;
-	int price;
-	TradingItem(std::unique_ptr<Item>&&, int);
+	int price, count;
+
+	TradingItem(std::unique_ptr<Item>&&, int, int = 1);
+	std::unique_ptr<Item> sell();
 };
 
 struct NPC {
 	std::string name;
-	std::mt19937 rndGen;
 	std::vector<std::string> dialogs;
 	std::vector<TradingItem> tradingMenu;
 
-	std::string dialog();
+	std::string dialog(std::mt19937&)const;
 };
 
 struct Yuuka: NPC {

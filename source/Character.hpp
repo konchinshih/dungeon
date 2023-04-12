@@ -1,38 +1,35 @@
 #pragma once
 
 #include"Entity.hpp"
-#include"Room.hpp"
 #include"Ability.hpp"
+#include"ClassType.hpp"
+#include"DirectionType.hpp"
 
-#include<memory>
+#include<string>
 
 namespace dungeon {
-
-struct Game;
 
 struct Character: Entity {
 	static constexpr int EXP_PER_LEVEL = 100;
 	int curX, curY;
-	std::shared_ptr<Room> curPos;
 	int curExp;
 
-	Character();
-	void initialize();
+	void move(DirectionType);
 };
 
-template<Class C>
+template<ClassType C>
+struct CharacterClass: Character {
+	CharacterClass(const std::string&);
+};
+
 struct CharNA: NormalAttack {
 	CharNA();
 };
 
-template<Class C>
+template<ClassType C>
 struct CharSkill: Skill {
 	CharSkill();
 };
 
-template<Class C>
-struct CharBurst: Burst {
-	CharBurst();
-};
 
 }

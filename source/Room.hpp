@@ -8,40 +8,45 @@
 
 namespace dungeon {
 
-struct Map;
-
-enum RoomType {
-  nothing, treasure, npc, monster, boss
+enum class RoomType {
+  NOTHING, TREASURE, NPC, MONSTER, BOSS
 };
+
+struct Game;
 
 struct Room {
   RoomType type;
 
   Room();
+  virtual void doAction(Game&);
 };
 
 struct TreasureRoom: Room {
   std::unique_ptr<Item> item;
 
   TreasureRoom(std::unique_ptr<Item>&&);
+  void doAction(Game&);
 };
 
 struct NPCRoom: Room {
   std::unique_ptr<NPC> npc;
 
   NPCRoom(std::unique_ptr<NPC>&&);
+  void doAction(Game&);
 };
 
 struct MonsterRoom: Room {
   std::unique_ptr<Monster> monster;
 
   MonsterRoom(std::unique_ptr<Monster>&&);
+  void doAction(Game&);
 };
 
 struct BossRoom: Room {
   std::unique_ptr<Boss> boss;
 
   BossRoom(std::unique_ptr<Boss>&&);
+  void doAction(Game&);
 };
 
 }

@@ -5,37 +5,26 @@
 #include"Inventory.hpp"
 #include"Map.hpp"
 
-#include<chrono>
+#include<random>
+#include<memory>
 
 namespace dungeon {
 
 struct Game {
+  std::mt19937 rndGen;
   IOSystem ios;
   Map map;
-  Character mainChar;
-  bool isEnd;
+  bool isGameEnded;
 
-  void initialize();
-  void welcome();
-  void selectClass();
-  void enterName();
-
-  void printMapInfo();
-  void action();
-
-  void showStatus();
-  void showInventory();
-
-  void talkToNPC();
-
-  void move();
-  void moveUp();
-  void moveDown();
-  void moveLeft();
-  void moveRight();
+  std::unique_ptr<Character> mainChar;
 
   Game();
   void run();
+  void action();
+  void move();
+  void enhance();
+  void talkToNPC(const std::unique_ptr<NPC>&);
+  void buyItemFromNPC(const std::unique_ptr<NPC>&);
 };
 
 }

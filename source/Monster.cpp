@@ -3,68 +3,73 @@
 namespace dungeon {
 
 Slime::Slime() {
-  type = Class::none;
+  type = ClassType::NONE;
   name = "Slime";
-  hpBase = 10000;
-  atkBase = 50;
-  critRateBase = 5;
-  critDamageBase = 50;
-  energy = 5;
-  curHp = hp();
+
+  attr.baseHp = 10000;
+  attr.baseAtk = 50;
+  attr.critRatePercent = 5;
+  attr.critDamagePercent = 50;
+  curHp = attr.hp();
 }
 
 template<>
-Goblin<Class::saber>::Goblin() {
-  type = Class::saber;
+Goblin<ClassType::SABER>::Goblin() {
+  type = ClassType::SABER;
   name = "Goblin saber";
-  hpBase = 5000;
-  atkBase = 70;
-  critRateBase = 5;
-  critDamageBase = 50;
-  curHp = hp();
+
+  attr.baseHp = 5000;
+  attr.baseAtk = 70;
+  attr.critRatePercent = 5;
+  attr.critDamagePercent = 50;
+  curHp = attr.hp();
 }
 
 template<>
-Goblin<Class::archer>::Goblin() {
-  type = Class::archer;
+Goblin<ClassType::ARCHER>::Goblin() {
+  type = ClassType::ARCHER;
   name = "Goblin archer";
-  hpBase = 5000;
-  atkBase = 50;
-  critRateBase = 15;
-  critDamageBase = 50;
-  curHp = hp();
+
+  attr.baseHp = 5000;
+  attr.baseAtk = 50;
+  attr.critRatePercent = 15;
+  attr.critDamagePercent = 50;
+  curHp = attr.hp();
 }
 
 template<>
-Goblin<Class::lancer>::Goblin() {
-  type = Class::lancer;
+Goblin<ClassType::LANCER>::Goblin() {
+  type = ClassType::LANCER;
   name = "Goblin lancer";
-  hpBase = 7000;
-  atkBase = 50;
-  critRateBase = 5;
-  critDamageBase = 50;
-  curHp = hp();
+
+  attr.baseHp = 7000;
+  attr.baseAtk = 50;
+  attr.critRatePercent = 5;
+  attr.critDamagePercent = 50;
+  curHp = attr.hp();
 }
 
 template<>
-Goblin<Class::berserker>::Goblin() {
-  type = Class::berserker;
+Goblin<ClassType::BERSERKER>::Goblin() {
+  type = ClassType::BERSERKER;
   name = "Goblin berserker";
-  hpBase = 3000;
-  atkBase = 100;
-  critRateBase = 5;
-  critDamageBase = 50;
-  curHp = hp();
+
+  attr.baseHp = 3000;
+  attr.baseAtk = 100;
+  attr.critRatePercent = 5;
+  attr.critDamagePercent = 50;
+  curHp = attr.hp();
 }
 
 Rimuru::Rimuru() {
-  type = Class::none;
+  type = ClassType::NONE;
   name = "Rimuru Tempest";
-  hpBase = 1000000;
-  atkBase = 500;
-  critRateBase = 20;
-  critDamageBase = 100;
-  curHp = hp();
+
+  attr.baseHp = 1000000;
+  attr.baseAtk = 500;
+  attr.critRatePercent = 20;
+  attr.critDamagePercent = 100;
+  curHp = attr.hp();
 }
 
 }

@@ -1,6 +1,6 @@
 CXX ?= g++
 
-COMPILE_FLAGS += -W -Wall -Wextra -Werror -O0 -Wno-unused-parameter -fsanitize=address,undefined -g
+COMPILE_FLAGS += -std=c++23 -W -Wall -Wextra -Werror -O0 -Wno-unused-parameter -fsanitize=address,undefined -g
 LINK_FLAGS += -fsanitize=address,undefined -g
 
 SRC_DIRS := ./source

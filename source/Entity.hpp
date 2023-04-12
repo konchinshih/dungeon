@@ -1,9 +1,10 @@
 #pragma once
 
-#include"Class.hpp"
+#include"ClassType.hpp"
 #include"Inventory.hpp"
 #include"Ability.hpp"
 #include"Effect.hpp"
+#include"Attribute.hpp"
 
 #include<string>
 #include<vector>
@@ -12,24 +13,18 @@
 namespace dungeon {
 
 struct Entity {
-	static constexpr int MIN_ATTACK_INTERVAL = 300;
-	static constexpr double ATKSPEED_MAGIC_NUMBER = 100.0;
-
-	Class type;
+	ClassType type;
 	std::string name;
 	Inventory inventory;
-	int level;
-	int hpBase, atkBase;
-	int critRateBase, critDamageBase;
-	int curHp;
-	int atkSpeed;
-	int energy;
 
+	Attribute attr;
+
+	int level;
 	int coin;
+	int curHp;
 
 	std::unique_ptr<NormalAttack> normalAttack;
 	std::unique_ptr<Skill> skill;
-	std::unique_ptr<Burst> burst;
 
 	std::vector<std::unique_ptr<Effect>> effects;
 
@@ -39,7 +34,8 @@ struct Entity {
 	int critDamage();
 	int atkInterval(const Ability&);
 
-	Filter equipped();
+	InventoryFilter equipped();
+	void addItem(std::unique_ptr<Item>&&);
 };
 
 }

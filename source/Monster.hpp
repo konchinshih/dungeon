@@ -1,7 +1,7 @@
 #pragma once
 
 #include"Entity.hpp"
-#include"Class.hpp"
+#include"ClassType.hpp"
 #include"Ability.hpp"
 
 namespace dungeon {
@@ -14,7 +14,7 @@ struct Slime: Monster {
   Slime();
 };
 
-template<Class C>
+template<ClassType C>
 struct Goblin: Monster {
   Goblin();
 };

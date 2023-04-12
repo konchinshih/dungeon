@@ -1,49 +1,50 @@
 #pragma once
 
-#include"Class.hpp"
+#include"ClassType.hpp"
+#include"Attribute.hpp"
 
-#include<iostream>
 #include<string>
+#include<memory>
 
 namespace dungeon {
 
-struct Inventory;
-struct Entity;
-
 struct Item {
-  Class type;
+  ClassType type;
   std::string name;
   // std::string description;
-  int hpAdd, atkAdd;
-  int hpPercentAdd, atkPercentAdd;
-  int critRateAdd, critDamageAdd;
-
-  Item();
-  Item& operator+=(const Item&);
+  Attribute attr;
+  virtual std::unique_ptr<Item> copy()const = 0;
 };
+
 
 struct WreckingBar: Item {
   WreckingBar();
+  std::unique_ptr<Item> copy()const;
 };
 
 struct Excalibur: Item {
   Excalibur();
+  std::unique_ptr<Item> copy()const;
 };
 
 struct WaterPistol: Item {
   WaterPistol();
+  std::unique_ptr<Item> copy()const;
 };
 
 struct Rhongomyniad: Item {
   Rhongomyniad();
+  std::unique_ptr<Item> copy()const;
 };
 
 struct AltereactorEngine: Item {
   AltereactorEngine();
+  std::unique_ptr<Item> copy()const;
 };
 
 struct PhilosophersStone: Item {
   PhilosophersStone();
+  std::unique_ptr<Item> copy()const;
 };
 
 }
