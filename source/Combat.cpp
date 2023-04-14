@@ -21,37 +21,42 @@ Combat::Combat(
 }
 
 void Combat::run() {
-	while (!isCombatEnded) {
+	while (true) {
 		ios.clear();
 		ios.printCombatStatus(enemy);
 		ios.printCombatStatus(mainChar);
 		ios.printCombatLogs();
 
+		if (isCombatEnded) break;
+
 		if (!mainChar.curCoolDown)
 			action();
 		if (enemy.curHp <= 0) {
-			isWon = isCombatEnded = true; break;
+			isWon = isCombatEnded = true; continue;
 		}
 		if (!enemy.curCoolDown)
 			enemyAction();
 		if (mainChar.curHp <= 0) {
-			isCombatEnded = true; break;
+			isCombatEnded = true; continue;
 		}
 
 		takeEffect(mainChar);
 		if (mainChar.curHp <= 0) {
-			isCombatEnded = true; break;
+			isCombatEnded = true; continue;
 		}
 		takeEffect(enemy);
 		if (enemy.curHp <= 0) {
-			isWon = isCombatEnded = true; break;
+			isWon = isCombatEnded = true; continue;
 		}
 
 		ios.sleep();
 		mainChar.nextTick();
 		enemy.nextTick();
 	}
-	getReward();
+	if (isWon)
+		getReward();
+	else
+		ios.printCombatEscape();
 }
 
 void Combat::takeEffect(Entity& entity) {
@@ -96,15 +101,34 @@ void Combat::enemyAction() {
 void Combat::attack(Entity& target, Entity& attacker, const Ability& ability) {
 	std::uniform_real_distribution<> critDistribution(0, 100);
 	int isCrit = attacker.attr.critRate() < critDistribution(rndGen);
+	double critMultiplier = (100 + isCrit * attacker.attr.critDamage()) / 100.0;
 
-	int levelMultiplier = 100 + (attacker.level - target.level) * 20;
-	levelMultiplier = std::max(levelMultiplier, 50);
-	levelMultiplier = std::min(levelMultiplier, 150);
+	double levelMultiplier = (100 + (attacker.level - target.level) * 20) / 100.0;
+	levelMultiplier = std::max(levelMultiplier, 0.50);
+	levelMultiplier = std::min(levelMultiplier, 1.50);
 
-	int damage = (long long)attacker.attr.atk()
-	             * ability.motionValue()
-	             * (100 + isCrit * attacker.attr.critDamage())
-	             * levelMultiplier / 1000000;
+	double classMultiplier = 1.00;
+	if (
+	  (attacker.type == ClassType::SABER && target.type == ClassType::LANCER) ||
+	  (attacker.type == ClassType::ARCHER && target.type == ClassType::SABER) ||
+	  (attacker.type == ClassType::LANCER && target.type == ClassType::ARCHER) ||
+	  target.type == ClassType::BERSERKER
+	)
+		classMultiplier = 2.00;
+	if (attacker.type == ClassType::BERSERKER)
+		classMultiplier = 1.50;
+	if (
+	  (attacker.type == ClassType::SABER && target.type == ClassType::ARCHER) ||
+	  (attacker.type == ClassType::ARCHER && target.type == ClassType::LANCER) ||
+	  (attacker.type == ClassType::LANCER && target.type == ClassType::SABER)
+	)
+		classMultiplier = 0.50;
+
+	int damage = attacker.attr.atk()
+	             * ability.motionValue() / 100.0
+	             * critMultiplier
+	             * classMultiplier
+	             * levelMultiplier;
 
 	ios.printAttackEvent(target, attacker, ability, damage);
 	target.curHp -= damage;

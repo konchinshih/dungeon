@@ -36,12 +36,12 @@ void IOSystem::sleep(int tick) {
 }
 
 void IOSystem::welcome() {
-	std::cout << "hello, world" << std::endl;
+	*this << "hello, world?" << endl;
 	pause();
 }
 
 std::string IOSystem::askMainCharName() {
-	std::cout << "Enter your name: " << std::flush;
+	*this << "Enter your name: " << flush;
 	std::string input, ret, tmp;
 	std::vector<std::string> tokens;
 	while (tokens.empty()) {
@@ -57,12 +57,12 @@ std::string IOSystem::askMainCharName() {
 }
 
 ClassType IOSystem::askMainCharClass() {
-	std::cout << "Select your class\n"
-	          << "A. Saber\n"
-	          << "B. Archer\n"
-	          << "C. Lancer\n"
-	          << "D. Berserker\n"
-	          << ": " << std::flush;
+	*this << "Select your class\n"
+	      << "A. Saber\n"
+	      << "B. Archer\n"
+	      << "C. Lancer\n"
+	      << "D. Berserker\n"
+	      << ": " << flush;
 	std::string input, tmp;
 	while (std::getline(std::cin, input)) {
 		std::stringstream ss(input);
@@ -245,6 +245,7 @@ std::ostream& operator<<(std::ostream& os, InventoryFilter filter) {
 void IOSystem::printCharStatus(const Character& character) {
 	std::stringstream expStat;
 	expStat << character.level << "[" << character.curExp << "/" << Character::EXP_PER_LEVEL << "]";
+	*this << character << '\n';
 	std::cout << "Your Status:\n"
 	          << std::setw(15) << "Name" << std::setw(20) << character.name << std::endl
 	          << std::setw(15) << "HP" << std::setw(20) << character.attr.hp() << std::endl
@@ -340,7 +341,7 @@ void IOSystem::printAttackEvent(
 	   << " attack "
 	   << "\'" << target.name << "\'"
 	   << " with "
-	   << ability.name
+	   << "\'" << ability.name << "\'"
 	   << " cause "
 	   << damage << " damage.";
 	combatLogs.push_back(ss.str());
@@ -360,8 +361,56 @@ void IOSystem::printReward(const Monster& monster) {
 	          << "Receive " << monster.coinDrop << " coin" << std::endl;
 }
 
+void IOSystem::printCombatEscape() {
+	std::cout << "Escape from combat" << std::endl;
+}
+
 void IOSystem::printLevelUp() {
 	std::cout << "Level up!" << std::endl;
+}
+
+// IO interface
+IOSystem& IOSystem::operator<<(const std::integral auto& val) {
+	std::cout << ANSI_ESC_MAGENTA << val << ANSI_ESC_COLOR_RESET;
+	return *this;
+}
+
+IOSystem& IOSystem::operator<<(const std::floating_point auto& val) {
+	std::cout << ANSI_ESC_MAGENTA << val << ANSI_ESC_COLOR_RESET;
+	return *this;
+}
+
+IOSystem& IOSystem::operator<<(const std::convertible_to<std::string> auto& val) {
+	// std::cout.rdbuf()->sputn(ANSI_ESC_GREEN, sizeof ANSI_ESC_GREEN);
+	std::cout << val;
+	// std::cout.rdbuf()->sputn(ANSI_ESC_COLOR_RESET, sizeof ANSI_ESC_COLOR_RESET);
+	return *this;
+}
+
+IOSystem& IOSystem::operator<<(const std::derived_from<Entity> auto& entity) {
+	std::cout << ANSI_ESC_BLUE << entity.name << ANSI_ESC_COLOR_RESET;
+	return *this;
+}
+
+IOSystem& IOSystem::operator<<(const std::derived_from<Ability> auto& ability) {
+	std::cout << ANSI_ESC_CYAN << ability.name << ANSI_ESC_COLOR_RESET;
+	return *this;
+}
+
+IOSystem& IOSystem::operator<<(const std::derived_from<Effect> auto& effect) {
+	std::cout << ANSI_ESC_YELLOW << effect.name << ANSI_ESC_COLOR_RESET;
+	return *this;
+}
+
+IOSystem& IOSystem::operator<<(std::function<IOSystem&(IOSystem&)> func) {
+	return func(*this);
+}
+
+IOSystem& endl(IOSystem& ios) {
+	std::cout << std::endl; return ios;
+}
+IOSystem& flush(IOSystem& ios) {
+	std::cout.flush(); return ios;
 }
 
 }
