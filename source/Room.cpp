@@ -25,7 +25,7 @@ void Room::doAction(Game&) {} // do nothing
 
 void TreasureRoom::doAction(Game& game) {
   if (isActionDone) return;
-  // game.mainChar->addItem(std::move(item));
+  game.mainChar->addItem(std::move(item));
   isActionDone = true;
 }
 
