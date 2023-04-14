@@ -10,18 +10,18 @@ namespace dungeon {
 
 struct Ability {
 	std::string name;
-	// std::string dialog;
+	// std::string description;
 	int baseInterval;
-	int motionValue; // Percent
-	int motionValueGrow;
-	int maxLevel;
+	int baseMotionValuePercent; // Percent
+	int motionValuePercentGrow;
+	int curLevel, maxLevel;
 
 	std::vector<std::unique_ptr<Effect>> selfEffects;
 	std::vector<std::unique_ptr<Effect>> enemyEffects;
+
+	Ability(std::string, int, int, int, int);
+
+	int motionValue()const;
 };
-
-struct NormalAttack: Ability {};
-
-struct Skill: Ability {};
 
 }

@@ -2,6 +2,7 @@
 
 #include"ActionOption.hpp"
 #include"EnhanceOption.hpp"
+#include"Combat.hpp"
 
 #include<chrono>
 #include<utility>
@@ -29,9 +30,10 @@ Game::Game(): rndGen(std::chrono::steady_clock::now().time_since_epoch().count()
 void Game::run() {
   while (!isGameEnded) {
     ios.clear();
-    ios.printMapInfo(map);
+    ios.printCharPos(*mainChar);
     action();
   }
+  ios.printEndingMessage();
 }
 
 void Game::action() {
@@ -39,11 +41,13 @@ void Game::action() {
   case ActionOption::MOVE:
     move(); break;
   case ActionOption::CHECK_STATUS:
-    ios.printCharStatus(mainChar); break;
+    ios.printCharStatus(*mainChar);
+    ios.pause(); break;
   case ActionOption::ENHANCE:
     enhance(); break;
   case ActionOption::OPEN_INVENTORY:
-    ios.printInventory(mainChar->inventory); break;
+    ios.printInventory(mainChar->inventory);
+    ios.pause(); break;
   default:
     std::unreachable();
   }
@@ -51,23 +55,17 @@ void Game::action() {
 
 void Game::move() {
   mainChar->move(ios.askMoveDirection());
-  // possible outcome:
-  // 1. nothing
-  // 2. combat
-  // 3. get item
-  // 4. talk to npc (only when entering the room or re-entering the room)
-  map.at(mainChar)->doAction(*this);
+  map.at(*mainChar)->doAction(*this);
 }
 
 void Game::enhance() {
-// TODO
   bool isEnhanceEnded = false;
   while (!isEnhanceEnded) {
-    switch (ios.askWhatToEnhance(mainChar)) {
+    switch (ios.askWhatToEnhance(*mainChar)) {
     case EnhanceOption::NORMAL_ATTACK:
-      break;
+      mainChar->enhance(*mainChar->normalAttack); break;
     case EnhanceOption::SKILL:
-      break;
+      mainChar->enhance(*mainChar->skill); break;
     case EnhanceOption::EXIT:
       isEnhanceEnded = true; break;
     default:
@@ -76,12 +74,13 @@ void Game::enhance() {
   }
 }
 
-void Game::talkToNPC(const std::unique_ptr<NPC>& npc) {
+void Game::talkToNPC(NPC& npc) {
   bool isTalkEnded = false;
   while (!isTalkEnded) {
     switch (ios.askWhatToDoWithNPC(npc)) {
     case NPCTalkOption::TALK:
-      ios.printDialog(npc); break;
+      ios.printDialog(npc, rndGen);
+      ios.pause(); break;
     case NPCTalkOption::BUY_ITEM:
       buyItemFromNPC(npc); break;
     case NPCTalkOption::EXIT:
@@ -92,12 +91,11 @@ void Game::talkToNPC(const std::unique_ptr<NPC>& npc) {
   }
 }
 
-void Game::buyItemFromNPC(const std::unique_ptr<NPC>& npc) {
+void Game::buyItemFromNPC(NPC& npc) {
   while (true) {
-    int which = ios.askWhichToBuy(npc);
+    int which = ios.askWhichToBuy(npc, *mainChar);
     if (which == -1) break;
-    if (mainChar->coin >= npc->tradingMenu[which].price)
-      mainChar->addItem(npc->tradingMenu[which].sell());
+    mainChar->addItem(npc.tradingMenu[which].sell());
   }
 }
 

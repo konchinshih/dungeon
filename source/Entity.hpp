@@ -17,25 +17,31 @@ struct Entity {
 	std::string name;
 	Inventory inventory;
 
+	std::unique_ptr<Ability> normalAttack;
+	std::unique_ptr<Ability> skill;
+
 	Attribute attr;
 
 	int level;
-	int coin;
-	int curHp;
 
-	std::unique_ptr<NormalAttack> normalAttack;
-	std::unique_ptr<Skill> skill;
-
+	// only use in combat
+	int curHp, curCoolDown;
 	std::vector<std::unique_ptr<Effect>> effects;
 
-	int hp();
-	int atk();
-	int critRate();
-	int critDamage();
-	int atkInterval(const Ability&);
+	Entity(
+	  ClassType type,
+	  std::string name,
+	  int hp, int atk, int level,
+	  std::unique_ptr<Ability>&& na,
+	  std::unique_ptr<Ability>&& skill
+	);
 
-	InventoryFilter equipped();
+	InventoryFilter equipped()const;
 	void addItem(std::unique_ptr<Item>&&);
+
+	// only use in combat
+	int atkInterval(const Ability&)const;
+	void nextTick();
 };
 
 }

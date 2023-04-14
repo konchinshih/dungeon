@@ -23,8 +23,8 @@ struct Game {
   void action();
   void move();
   void enhance();
-  void talkToNPC(const std::unique_ptr<NPC>&);
-  void buyItemFromNPC(const std::unique_ptr<NPC>&);
+  void talkToNPC(NPC&);
+  void buyItemFromNPC(NPC&);
 };
 
 }

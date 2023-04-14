@@ -5,6 +5,16 @@
 
 namespace dungeon {
 
+Character::Character(
+  ClassType type,
+  std::string name,
+  int hp, int atk,
+  std::unique_ptr<Ability>&& na,
+  std::unique_ptr<Ability>&& skill
+):
+	Entity(type, name, hp, atk, 1, std::move(na), std::move(skill)),
+	curX(0), curY(0), curExp(0), coin(0), abilityPoint(0) {}
+
 void Character::move(DirectionType direction) {
 	switch (direction) {
 	case DirectionType::UP:
@@ -20,128 +30,81 @@ void Character::move(DirectionType direction) {
 	}
 }
 
-template<>
-CharacterClass<ClassType::SABER>::CharacterClass(const std::string& name) {
-	type = ClassType::SABER;
-	this->name = name;
+void Character::enhance(Ability& ability) {
+	abilityPoint--, ability.curLevel++;
+}
 
-	attr.baseHp = 2222;
-	attr.baseAtk = 1734;
-	attr.critRatePercent = 5;
-	attr.critDamagePercent = 50;
-
-	level = coin = 0;
-	curHp = attr.hp();
-
-	normalAttack = std::make_unique<CharNA>();
-	skill = std::make_unique<CharSkill<ClassType::SABER>>();
-
-	curX = curY = 0, curExp = 0;
+void Character::levelUp() {
+	int incLevel = curExp / EXP_PER_LEVEL;
+	curExp %= EXP_PER_LEVEL;
+	level += incLevel, abilityPoint += incLevel;
 }
 
 template<>
-CharacterClass<ClassType::ARCHER>::CharacterClass(const std::string& name) {
-	type = ClassType::ARCHER;
-	this->name = name;
-
-	attr.baseHp = 2134;
-	attr.baseAtk = 1742;
-	attr.critRatePercent = 5;
-	attr.critDamagePercent = 50;
-
-	level = coin = 0;
-	curHp = attr.hp();
-
-	normalAttack = std::make_unique<CharNA>();
-	skill = std::make_unique<CharSkill<ClassType::ARCHER>>();
-
-	curX = curY = 0, curExp = 0;
-}
+CharacterClass<ClassType::SABER>::CharacterClass(const std::string& name):
+	Character(
+	  ClassType::SABER, name,
+	  2222, 1734,
+	  std::make_unique<CharNA>(),
+	  std::make_unique<CharSkill<ClassType::SABER>>()
+	)
+{}
 
 template<>
-CharacterClass<ClassType::LANCER>::CharacterClass(const std::string& name) {
-	type = ClassType::LANCER;
-	this->name = name;
-
-	attr.baseHp = 2288;
-	attr.baseAtk = 1699;
-	attr.critRatePercent = 5;
-	attr.critDamagePercent = 50;
-
-	level = coin = 0;
-	curHp = attr.hp();
-
-	normalAttack = std::make_unique<CharNA>();
-	skill = std::make_unique<CharSkill<ClassType::LANCER>>();
-
-	curX = curY = 0, curExp = 0;
-}
+CharacterClass<ClassType::ARCHER>::CharacterClass(const std::string& name):
+	Character(
+	  ClassType::ARCHER, name,
+	  2134, 1742,
+	  std::make_unique<CharNA>(),
+	  std::make_unique<CharSkill<ClassType::ARCHER>>()
+	)
+{}
 
 template<>
-CharacterClass<ClassType::BERSERKER>::CharacterClass(const std::string& name) {
-	type = ClassType::BERSERKER;
-	this->name = name;
-
-	attr.baseHp = 2079;
-	attr.baseAtk = 1717;
-	attr.critRatePercent = 5;
-	attr.critDamagePercent = 50;
-
-	level = coin = 0;
-	curHp = attr.hp();
-
-	normalAttack = std::make_unique<CharNA>();
-	skill = std::make_unique<CharSkill<ClassType::BERSERKER>>();
-
-	curX = curY = 0, curExp = 0;
-}
-
-
-CharNA::CharNA() {
-	name = "Normal Attack";
-	baseInterval = 10;
-	motionValue = 50;
-	motionValueGrow = 5;
-	maxLevel = 99;
-}
+CharacterClass<ClassType::LANCER>::CharacterClass(const std::string& name):
+	Character(
+	  ClassType::LANCER, name,
+	  2288, 1699,
+	  std::make_unique<CharNA>(),
+	  std::make_unique<CharSkill<ClassType::LANCER>>()
+	)
+{}
 
 template<>
-CharSkill<ClassType::SABER>::CharSkill() {
-	name = "Charisma";
-	baseInterval = 100;
-	motionValue = 0;
-	motionValueGrow = 0;
-	maxLevel = 1;
+CharacterClass<ClassType::BERSERKER>::CharacterClass(const std::string& name):
+	Character(
+	  ClassType::BERSERKER, name,
+	  2079, 1717,
+	  std::make_unique<CharNA>(),
+	  std::make_unique<CharSkill<ClassType::BERSERKER>>()
+	)
+{}
+
+
+CharNA::CharNA():
+	Ability("Normal Attack", 10, 50, 5, 99) {}
+
+template<>
+CharSkill<ClassType::SABER>::CharSkill():
+	Ability("Charisma",	100, 0, 0, 1) {
 	selfEffects.push_back(std::make_unique<AtkPercentUp>());
 }
 
 template<>
-CharSkill<ClassType::ARCHER>::CharSkill() {
-	name = "Instinct";
-	baseInterval = 100;
-	motionValue = 0;
-	motionValueGrow = 0;
-	maxLevel = 1;
+CharSkill<ClassType::ARCHER>::CharSkill():
+	Ability("Instinct",	100, 0, 0, 1) {
 	selfEffects.push_back(std::make_unique<CritRateUp>());
 }
 
 template<>
-CharSkill<ClassType::LANCER>::CharSkill() {
-	name = "Mana Burst";
-	baseInterval = 100;
-	motionValue = 0;
-	motionValueGrow = 0;
-	maxLevel = 1;
+CharSkill<ClassType::LANCER>::CharSkill():
+	Ability("Mana Burst",	100, 0, 0, 1) {
 	selfEffects.push_back(std::make_unique<CritDamageUp>());
 }
 
 template<>
-CharSkill<ClassType::BERSERKER>::CharSkill() {
-	name = "Sovereign's Invisible Hand";
-	baseInterval = 100;
-	motionValue = 0;
-	motionValueGrow = 0;
-	maxLevel = 1;
+CharSkill<ClassType::BERSERKER>::CharSkill():
+	Ability("Sovereign's Invisible Hand",	100, 0, 0, 1) {
 	selfEffects.push_back(std::make_unique<AtkSpeedUp>());
 }
 

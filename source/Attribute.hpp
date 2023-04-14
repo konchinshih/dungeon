@@ -24,7 +24,23 @@ struct Attribute {
 	int flatAtk;
 	int flatExp;
 
-	Attribute();
+	Attribute(
+	  int baseHp = 0,
+	  int baseAtk = 0,
+	  int baseAtkSpeed = 0,
+	  int baseExp = 0,
+
+	  int hpPercent = 0,
+	  int atkPercent = 0,
+	  int atkSpeedPercent = 0,
+	  int critRatePercent = 0,
+	  int critDamagePercent = 0,
+	  int expGainPercent = 0,
+
+	  int flatHp = 0,
+	  int flatAtk = 0,
+	  int flatExp = 0
+	);
 
 	int hp()const;
 	int atk()const;

@@ -11,7 +11,7 @@ TradingItem::TradingItem(std::unique_ptr<Item>&& item, int price, int count):
 
 std::unique_ptr<Item> TradingItem::sell() {
 	assert(count > 0), count -= 1;
-	return item->copy();
+	return std::move(item->copy());
 }
 
 std::string NPC::dialog(std::mt19937& rndGen)const {

@@ -17,11 +17,12 @@ struct Game;
 struct Room {
   RoomType type;
 
-  Room();
+  Room(RoomType = RoomType::NOTHING);
   virtual void doAction(Game&);
 };
 
 struct TreasureRoom: Room {
+  bool isActionDone;
   std::unique_ptr<Item> item;
 
   TreasureRoom(std::unique_ptr<Item>&&);
@@ -36,6 +37,7 @@ struct NPCRoom: Room {
 };
 
 struct MonsterRoom: Room {
+  bool isActionDone;
   std::unique_ptr<Monster> monster;
 
   MonsterRoom(std::unique_ptr<Monster>&&);

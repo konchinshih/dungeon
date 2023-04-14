@@ -16,10 +16,10 @@ struct Inventory {
 };
 
 struct InventoryFilter {
-  Inventory& inventory;
+  const Inventory& inventory;
   std::function<bool(const std::unique_ptr<Item>&)> cond;
 
-  InventoryFilter(Inventory&, std::function<bool(const std::unique_ptr<Item>&)>);
+  InventoryFilter(const Inventory&, std::function<bool(const std::unique_ptr<Item>&)>);
 };
 
 }
