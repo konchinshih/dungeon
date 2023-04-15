@@ -12,12 +12,19 @@ Combat::Combat(
   Character& mainChar,
   Monster& enemy
 ): rndGen(rndGen), ios(ios), mainChar(mainChar), enemy(enemy),
-	isWon(false), isCombatEnded(false) {
+	isWon(false), isLose(false), isCombatEnded(false) {
 	mainChar.curHp = mainChar.attr.hp();
 	mainChar.curCoolDown = 0;
 	enemy.curHp = enemy.attr.hp();
 	enemy.curCoolDown = 0;
 	ios.clearCombatLog();
+	ios.printCombatStart();
+}
+
+Combat::~Combat() {
+	for (auto& effect : mainChar.effects)
+		effect->end(mainChar);
+	mainChar.effects.clear();
 }
 
 void Combat::run() {
@@ -37,12 +44,12 @@ void Combat::run() {
 		if (!enemy.curCoolDown)
 			enemyAction();
 		if (mainChar.curHp <= 0) {
-			isCombatEnded = true; continue;
+			isLose = isCombatEnded = true; continue;
 		}
 
 		takeEffect(mainChar);
 		if (mainChar.curHp <= 0) {
-			isCombatEnded = true; continue;
+			isLose = isCombatEnded = true; continue;
 		}
 		takeEffect(enemy);
 		if (enemy.curHp <= 0) {
@@ -60,10 +67,8 @@ void Combat::run() {
 }
 
 void Combat::takeEffect(Entity& entity) {
-	for (auto& effect : entity.effects) {
+	for (auto& effect : entity.effects)
 		effect->affect(entity);
-		ios.printEffectEvent(entity, *effect);
-	}
 }
 
 void Combat::action() {
@@ -99,6 +104,23 @@ void Combat::enemyAction() {
 }
 
 void Combat::attack(Entity& target, Entity& attacker, const Ability& ability) {
+// Effect application
+	for (auto& effect : ability.selfEffects) {
+		auto tmp = std::move(effect->copy());
+		tmp->begin(attacker), ios.printEffectEvent(attacker, *tmp);
+		if (attacker.effects.count(tmp))
+			attacker.effects.erase(tmp);
+		attacker.effects.insert(std::move(tmp));
+	}
+	for (auto& effect : ability.enemyEffects) {
+		auto tmp = std::move(effect->copy());
+		tmp->begin(target), ios.printEffectEvent(target, *tmp);
+		if (target.effects.count(tmp))
+			target.effects.erase(tmp);
+		target.effects.insert(std::move(tmp));
+	}
+
+// Damage Calculation
 	std::uniform_real_distribution<> critDistribution(0, 100);
 	int isCrit = attacker.attr.critRate() < critDistribution(rndGen);
 	double critMultiplier = (100 + isCrit * attacker.attr.critDamage()) / 100.0;
@@ -111,18 +133,19 @@ void Combat::attack(Entity& target, Entity& attacker, const Ability& ability) {
 	if (
 	  (attacker.type == ClassType::SABER && target.type == ClassType::LANCER) ||
 	  (attacker.type == ClassType::ARCHER && target.type == ClassType::SABER) ||
-	  (attacker.type == ClassType::LANCER && target.type == ClassType::ARCHER) ||
-	  target.type == ClassType::BERSERKER
+	  (attacker.type == ClassType::LANCER && target.type == ClassType::ARCHER)
 	)
 		classMultiplier = 2.00;
-	if (attacker.type == ClassType::BERSERKER)
-		classMultiplier = 1.50;
 	if (
 	  (attacker.type == ClassType::SABER && target.type == ClassType::ARCHER) ||
 	  (attacker.type == ClassType::ARCHER && target.type == ClassType::LANCER) ||
 	  (attacker.type == ClassType::LANCER && target.type == ClassType::SABER)
 	)
 		classMultiplier = 0.50;
+	if (target.type == ClassType::BERSERKER)
+		classMultiplier = 2.00;
+	if (attacker.type == ClassType::BERSERKER)
+		classMultiplier = 1.50;
 
 	int damage = attacker.attr.atk()
 	             * ability.motionValue() / 100.0

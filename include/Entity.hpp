@@ -9,6 +9,7 @@
 #include<string>
 #include<vector>
 #include<memory>
+#include<set>
 
 namespace dungeon {
 
@@ -26,7 +27,7 @@ struct Entity {
 
 	// only use in combat
 	int curHp, curCoolDown;
-	std::vector<std::unique_ptr<Effect>> effects;
+	std::set<std::unique_ptr<Effect>> effects;
 
 	Entity(
 	  ClassType type,
@@ -43,5 +44,8 @@ struct Entity {
 	int atkInterval(const Ability&)const;
 	void nextTick();
 };
+
+bool operator==(const std::unique_ptr<Effect>&, const std::unique_ptr<Effect>&);
+bool operator<(const std::unique_ptr<Effect>&, const std::unique_ptr<Effect>&);
 
 }

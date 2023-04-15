@@ -23,34 +23,49 @@
 
 namespace dungeon {
 
+// template<typename T>
+// concept ExceptionType =
+// !std::integral<T> &&
+// !std::floating_point<T> &&
+// !std::convertible_to<T, std::string> &&
+// !std::derived_from<T, Entity> &&
+// !std::derived_from<T, Item> &&
+// !std::derived_from<T, Ability> &&
+// !std::derived_from<T, Effect>;
+
+
+// ANSI Escape Code for Text Colors
+static constexpr char ANSI_ESC_RED[] = "\x1B[31m";         // ClassType
+static constexpr char ANSI_ESC_GREEN[] = "\x1B[32m";       // Item
+static constexpr char ANSI_ESC_YELLOW[] = "\x1B[33m";      // Effect
+static constexpr char ANSI_ESC_BLUE[] = "\x1B[34m";        // Entity, NPC
+static constexpr char ANSI_ESC_MAGENTA[] = "\x1B[35m";     // Number
+static constexpr char ANSI_ESC_CYAN[] = "\x1B[36m";        // Ability
+static constexpr char ANSI_ESC_COLOR_RESET[] = "\x1B[m";
+
 struct IOSystem {
+// ANSI Escape Code for Clearing UI
   static constexpr char ANSI_ESC_CLEAR[] = "\x1B[2J";
   static constexpr char ANSI_ESC_CURSOR_RESET[] = "\x1B[;H";
 
-  static constexpr char ANSI_ESC_RED[] = "\x1B[31m";
-  static constexpr char ANSI_ESC_GREEN[] = "\x1B[32m";
-  static constexpr char ANSI_ESC_YELLOW[] = "\x1B[33m";
-  static constexpr char ANSI_ESC_BLUE[] = "\x1B[34m";
-  static constexpr char ANSI_ESC_MAGENTA[] = "\x1B[35m";
-  static constexpr char ANSI_ESC_CYAN[] = "\x1B[36m";
-  static constexpr char ANSI_ESC_COLOR_RESET[] = "\x1B[m";
-
+// Messages
   static constexpr char PAUSE_MESSAGE[] = "[Press enter to continue]\n";
   static constexpr char HEADER_MESSAGE[] = "OOP Project - Dungeon by Ian Shih\n";
 
+// Constants
   static constexpr auto INTERVAL_PER_TICK = std::chrono::milliseconds(100);
-  static constexpr int MAX_LOG_LINE = 10;
+  static constexpr int MAX_LOG_LINE = 5;
 
-// Combat
-  std::deque<std::string> combatLogs;
+  IOSystem& cout;
+  std::istream& cin;
 
   IOSystem();
 
+// Healper functions
   void clear();
   void pause();
   void sleep(int tick = 1);
 
-  void welcome();
 
 // Game Process
   std::string askMainCharName();
@@ -61,15 +76,23 @@ struct IOSystem {
   NPCTalkOption askWhatToDoWithNPC(const NPC&);
   int askWhichToBuy(const NPC&, const Character&);
 
+  void printWelcome();
   void printCharPos(const Character&);
   void printCharStatus(const Character&);
-  void printInventory(const Inventory&);
+  void printInventory(const Character&);
   void printDialog(const NPC&, std::mt19937&);
-  void printEndingMessage();
+  void printRoomInfo(const Room&);
+  void printItemReceived(const Item&);
+  void printGameWinMessage();
+  void printGameLoseMessage();
 
 // Combat
+  std::deque<std::string> combatLogs;
   void clearCombatLog();
+
   CombatOption askCombatAction();
+
+  void printCombatStart();
   void printCombatStatus(const Entity&);
   void printCombatLogs();
   void printAttackEvent(
@@ -87,18 +110,17 @@ struct IOSystem {
   void printLevelUp();
 
 // IO interface
-  IOSystem& operator<<(const std::integral auto&);
-  IOSystem& operator<<(const std::floating_point auto&);
-  IOSystem& operator<<(const std::convertible_to<std::string> auto&);
-
-  IOSystem& operator<<(const std::derived_from<Entity> auto&);
-  IOSystem& operator<<(const std::derived_from<Ability> auto&);
-  IOSystem& operator<<(const std::derived_from<Effect> auto&);
-
-  IOSystem& operator<<(std::function<IOSystem&(IOSystem&)>);
+  // IOSystem& operator<<(const std::integral auto&);
+  // IOSystem& operator<<(const std::floating_point auto&);
+  // IOSystem& operator<<(ExceptionType auto&);
+  // IOSystem& operator<<(const auto&);
+  // IOSystem& operator<<(auto);
 };
 
-IOSystem& endl(IOSystem&);
-IOSystem& flush(IOSystem&);
+std::ostream& operator<<(std::ostream&, ClassType);
+// std::ostream& operator<<(std::ostream&, const std::derived_from<Entity> auto&);
+// std::ostream& operator<<(std::ostream&, const std::derived_from<Effect> auto&);
+// std::ostream& operator<<(std::ostream&, const std::derived_from<Item> auto&);
+// std::ostream& operator<<(std::ostream&, const std::derived_from<Ability> auto&);
 
 }

@@ -15,6 +15,7 @@ namespace dungeon {
 Map::Map(std::mt19937& rndGen): rndGen(rndGen) {
   for (int i = 0; i < 25; i++)
     roomPool.push_back(std::make_unique<Room>());
+  roomPool.push_back(std::make_unique<NPCRoom>(std::make_unique<Yuuka>()));
   roomPool.push_back(std::make_unique<TreasureRoom>(std::make_unique<Excalibur>()));
   roomPool.push_back(std::make_unique<TreasureRoom>(std::make_unique<WaterPistol>()));
   roomPool.push_back(std::make_unique<TreasureRoom>(std::make_unique<Rhongomyniad>()));

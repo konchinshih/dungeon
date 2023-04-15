@@ -14,7 +14,7 @@ struct Game {
   std::mt19937 rndGen;
   IOSystem ios;
   Map map;
-  bool isGameEnded;
+  bool isGameEnded, isWon;
 
   std::unique_ptr<Character> mainChar;
 

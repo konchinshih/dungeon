@@ -31,7 +31,7 @@ SlimeNA::SlimeNA():
   Ability("normal attack", 20, 50, 5, 99) {}
 
 SlimeSkill::SlimeSkill():
-  Ability("Slow Down!", 100, 0, 0, 1) {
+  Ability("Slow Down!", 30, 0, 0, 1) {
   enemyEffects.push_back(std::make_unique<AtkSpeedDown>());
 }
 
@@ -83,7 +83,7 @@ GoblinNA::GoblinNA():
   Ability("normal attack", 15, 50, 5, 99) {}
 
 GoblinSkill::GoblinSkill():
-  Ability("Crit Rate UP!", 100, 0, 0, 1) {
+  Ability("Crit Rate UP!", 30, 0, 0, 1) {
   selfEffects.push_back(std::make_unique<CritRateUp>());
 }
 
@@ -105,7 +105,8 @@ Rimuru::Rimuru():
   Boss(
     ClassType::NONE,
     "Rimuru Tempest",
-    1000000, 500, 50, 20, 100,
+    // 1000000, 500, 50, 20, 100,
+    100000, 100, 50, 20, 100,
     std::make_unique<RimuruNA>(),
     std::make_unique<RimuruSkill>()
   ) {}

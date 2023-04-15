@@ -16,7 +16,7 @@ struct Combat {
   Character& mainChar;
   Monster& enemy;
 
-  bool isWon, isCombatEnded;
+  bool isWon, isLose, isCombatEnded;
 
   Combat(
     std::mt19937&,
@@ -24,6 +24,7 @@ struct Combat {
     Character&,
     Monster&
   );
+  ~Combat();
 
   bool isActionAvailable();
 

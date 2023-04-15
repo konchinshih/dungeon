@@ -7,6 +7,9 @@ Effect::Effect(std::string name): name(name) {}
 
 Poison::Poison(): Effect("Poison") {}
 
+std::unique_ptr<Effect> Poison::copy()const {
+  return std::make_unique<Poison>();
+}
 void Poison::begin(Entity & entity) {
   timeLeft = DURATION;
 }
@@ -17,6 +20,9 @@ void Poison::end(Entity& entity) {}
 
 Burning::Burning(): Effect("Burning") {}
 
+std::unique_ptr<Effect> Burning::copy()const {
+  return std::make_unique<Burning>();
+}
 void Burning::begin(Entity& entity) {
   timeLeft = DURATION;
 }
@@ -27,6 +33,9 @@ void Burning::end(Entity& entity) {}
 
 AtkPercentDown::AtkPercentDown(): Effect("AtkPercentDown") {}
 
+std::unique_ptr<Effect> AtkPercentDown::copy()const {
+  return std::make_unique<AtkPercentDown>();
+}
 void AtkPercentDown::begin(Entity& entity) {
   timeLeft = DURATION;
   entity.attr.atkPercent -= AMOUNT;
@@ -38,6 +47,9 @@ void AtkPercentDown::end(Entity& entity) {
 
 AtkSpeedDown::AtkSpeedDown(): Effect("AtkSpeedDown") {}
 
+std::unique_ptr<Effect> AtkSpeedDown::copy()const {
+  return std::make_unique<AtkSpeedDown>();
+}
 void AtkSpeedDown::begin(Entity& entity) {
   timeLeft = DURATION;
   entity.attr.atkSpeedPercent -= AMOUNT;
@@ -49,6 +61,9 @@ void AtkSpeedDown::end(Entity& entity) {
 
 AtkPercentUp::AtkPercentUp(): Effect("AtkPercentUp") {}
 
+std::unique_ptr<Effect> AtkPercentUp::copy()const {
+  return std::make_unique<AtkPercentUp>();
+}
 void AtkPercentUp::begin(Entity& entity) {
   timeLeft = DURATION;
   entity.attr.atkPercent += AMOUNT;
@@ -60,6 +75,9 @@ void AtkPercentUp::end(Entity& entity) {
 
 CritRateUp::CritRateUp(): Effect("CritRateUp") {}
 
+std::unique_ptr<Effect> CritRateUp::copy()const {
+  return std::make_unique<CritRateUp>();
+}
 void CritRateUp::begin(Entity& entity) {
   timeLeft = DURATION;
   entity.attr.critRatePercent += AMOUNT;
@@ -71,6 +89,9 @@ void CritRateUp::end(Entity& entity) {
 
 CritDamageUp::CritDamageUp(): Effect("CritDamageUp") {}
 
+std::unique_ptr<Effect> CritDamageUp::copy()const {
+  return std::make_unique<CritDamageUp>();
+}
 void CritDamageUp::begin(Entity& entity) {
   timeLeft = DURATION;
   entity.attr.critDamagePercent += AMOUNT;
@@ -82,6 +103,9 @@ void CritDamageUp::end(Entity& entity) {
 
 AtkSpeedUp::AtkSpeedUp(): Effect("AtkSpeedUp") {}
 
+std::unique_ptr<Effect> AtkSpeedUp::copy()const {
+  return std::make_unique<AtkSpeedUp>();
+}
 void AtkSpeedUp::begin(Entity& entity) {
   timeLeft = DURATION;
   entity.attr.atkSpeedPercent += AMOUNT;

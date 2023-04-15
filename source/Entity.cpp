@@ -24,7 +24,8 @@ InventoryFilter Entity::equipped()const {
 }
 
 void Entity::addItem(std::unique_ptr<Item>&& item) {
-  attr += item->attr;
+  if (item->type == type || item->type == ClassType::ANY)
+    attr += item->attr;
   inventory.addItem(std::move(item));
 }
 
@@ -32,11 +33,21 @@ void Entity::addItem(std::unique_ptr<Item>&& item) {
 void Entity::nextTick() {
   if (curCoolDown > 0)
     curCoolDown--;
-  for (auto& effect : effects) {
-    effect->timeLeft--;
-    if (!effect->timeLeft)
-      effect->end(*this);
+  for (auto i = effects.begin(); i != effects.end(); i++) {
+    (*i)->timeLeft--;
+    if ((*i)->timeLeft <= 0) {
+      (*i)->end(*this);
+      i = effects.erase(i);
+    }
   }
+}
+
+bool operator==(const std::unique_ptr<Effect>& a, const std::unique_ptr<Effect>& b) {
+  return a->name == b->name;
+}
+
+bool operator<(const std::unique_ptr<Effect>& a, const std::unique_ptr<Effect>& b) {
+  return a->name < b->name;
 }
 
 }

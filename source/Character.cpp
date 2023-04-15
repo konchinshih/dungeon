@@ -86,25 +86,25 @@ CharNA::CharNA():
 
 template<>
 CharSkill<ClassType::SABER>::CharSkill():
-	Ability("Charisma",	100, 0, 0, 1) {
+	Ability("Charisma",	5, 0, 0, 1) {
 	selfEffects.push_back(std::make_unique<AtkPercentUp>());
 }
 
 template<>
 CharSkill<ClassType::ARCHER>::CharSkill():
-	Ability("Instinct",	100, 0, 0, 1) {
+	Ability("Instinct",	5, 0, 0, 1) {
 	selfEffects.push_back(std::make_unique<CritRateUp>());
 }
 
 template<>
 CharSkill<ClassType::LANCER>::CharSkill():
-	Ability("Mana Burst",	100, 0, 0, 1) {
+	Ability("Mana Burst",	5, 0, 0, 1) {
 	selfEffects.push_back(std::make_unique<CritDamageUp>());
 }
 
 template<>
 CharSkill<ClassType::BERSERKER>::CharSkill():
-	Ability("Sovereign's Invisible Hand",	100, 0, 0, 1) {
+	Ability("Sovereign's Invisible Hand",	5, 0, 0, 1) {
 	selfEffects.push_back(std::make_unique<AtkSpeedUp>());
 }
 

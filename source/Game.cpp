@@ -9,8 +9,13 @@
 
 namespace dungeon {
 
-Game::Game(): rndGen(std::chrono::steady_clock::now().time_since_epoch().count()), map(rndGen) {
-  ios.clear(), ios.welcome();
+Game::Game():
+  rndGen(std::chrono::steady_clock::now().time_since_epoch().count()),
+  map(rndGen), isGameEnded(false), isWon(false) {
+  ios.clear();
+  ios.printWelcome();
+  ios.pause();
+  ios.clear();
   auto name = ios.askMainCharName();
   switch (ios.askMainCharClass()) {
   case ClassType::SABER:
@@ -33,7 +38,10 @@ void Game::run() {
     ios.printCharPos(*mainChar);
     action();
   }
-  ios.printEndingMessage();
+  if (isWon)
+    ios.printGameWinMessage();
+  else
+    ios.printGameLoseMessage();
 }
 
 void Game::action() {
@@ -46,7 +54,7 @@ void Game::action() {
   case ActionOption::ENHANCE:
     enhance(); break;
   case ActionOption::OPEN_INVENTORY:
-    ios.printInventory(mainChar->inventory);
+    ios.printInventory(*mainChar);
     ios.pause(); break;
   default:
     std::unreachable();
@@ -55,6 +63,7 @@ void Game::action() {
 
 void Game::move() {
   mainChar->move(ios.askMoveDirection());
+  ios.printRoomInfo(*map.at(*mainChar));
   map.at(*mainChar)->doAction(*this);
 }
 
@@ -71,12 +80,14 @@ void Game::enhance() {
     default:
       std::unreachable();
     }
+    ios.pause();
   }
 }
 
 void Game::talkToNPC(NPC& npc) {
   bool isTalkEnded = false;
   while (!isTalkEnded) {
+    ios.clear();
     switch (ios.askWhatToDoWithNPC(npc)) {
     case NPCTalkOption::TALK:
       ios.printDialog(npc, rndGen);
@@ -93,9 +104,11 @@ void Game::talkToNPC(NPC& npc) {
 
 void Game::buyItemFromNPC(NPC& npc) {
   while (true) {
+    ios.clear();
     int which = ios.askWhichToBuy(npc, *mainChar);
     if (which == -1) break;
     mainChar->addItem(npc.tradingMenu[which].sell());
+    ios.pause();
   }
 }
 
