@@ -1,11 +1,9 @@
----
-tags: homework
----
-
 # OOP Project #1 -- Dungeon
 
 **For better reading experience:** [Link](https://hackmd.io/@konchin/dungeon)
+
 **Github Respository:** [Link](https://github.com/konchinshih/dungeon)
+
 **Youtube Result Video:** [Link](https://youtu.be/J-fNEkmGHEo)
 
 ## Functions
@@ -198,13 +196,16 @@ OriginLevelMultiplier&otherwise
 ## Discussion
 
 **寫的不夠符合 OCP 原則**
+
 主要是選項的地方，如果我想要加選項的話要改很多在 code 裡面列舉出來的東西，修改的時候比較繁瑣，之後可以研究一下要怎麼盡可能解決這個問題。
 
 **遊戲性可以更好**
+
 因為 Class 的相剋是參考 Fate/Grand Order 的設定，因此希望之後可以將 7 或更多個 Class 都實做出來，也可以增加更多的敵人和道具。
 另外傷害計算也還有可以優化的部份，像是 Resistance 和 Defense 應該分開並做的更 enemy specific 。Attack interval 的曲線和 Monster、 Boss 血量分配也沒有經過經過大量測試來驗證是否合理，可能要取得更多測試結果才有辦法優化這些部份。
 
 **操作界面可以更直覺**
+
 在一開始我花了非常多時間研究 multi-thread 以及一些 platform specific 的 input method ，做了一個半成品的 TUI，後來因為時間關係沒有做完就還是寫了一般 text-based 選選項的這種 IO interface。
 在實做時我希望之後可以把 TUI 完成之後補上，因此將 IO System 整個和其他部份的 code 盡量隔開。
 
